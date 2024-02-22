@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {ms, mvs} from 'react-native-size-matters';
 import AnimatedLottieView from 'lottie-react-native';
@@ -6,8 +6,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import Color from '../theme/Color';
 import {RootStackParams} from '../navigations';
-import {storage} from '../hooks/use-storage.hook';
-import {getAccessToken} from '../service/refreshToken';
 
 type SplashScrennProps = NativeStackScreenProps<
   RootStackParams,
@@ -19,24 +17,7 @@ export const SplashScreen: React.FC<SplashScrennProps> = ({
 }: SplashScrennProps) => {
   useEffect(() => {
     const checkProfileAndSetNavigation = async () => {
-      const JSONProfile = storage.getString('profile');
-      if (JSONProfile) {
-        try {
-          // 'await' waits for the promise to resolve and gets its value
-          const userToken = await getAccessToken();
-          if (userToken) {
-            navigation.replace('MainTab');
-          } else {
-            navigation.replace('LoginScreen');
-          }
-        } catch (err) {
-          console.log(err);
-          navigation.replace('LoginScreen');
-        }
-      } else {
-        // If there's no JSONProfile, replace to the LoginScreen directly
-        navigation.replace('LoginScreen');
-      }
+      navigation.replace('LoginScreen');
     };
 
     // Set a timeout to call the checkProfileAndSetNavigation after 1 second

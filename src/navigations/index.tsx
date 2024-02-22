@@ -16,6 +16,7 @@ import {FeedScreen, HomeScreen} from '../screen';
 // Screen
 import {LoginScreen} from '../screen/Login';
 import {SplashScreen} from '../screen/SplashScreen';
+import Maps from '../screen/Maps';
 
 // Icon
 import {HomeIcon, SearchIcon} from '../assets/icon';
@@ -26,6 +27,11 @@ export type RootStackParams = {
   SplashScreen: undefined;
   LoginScreen: undefined;
   MainTab: undefined;
+  Maps: {
+    latitude: number;
+    longitude: number;
+    picture: string;
+  };
 };
 
 export type MainTabParams = {
@@ -93,6 +99,7 @@ export const RootStackScreen = () => (
     <RootStack.Screen name="MainTab" component={TabScreen} />
     <RootStack.Screen name="LoginScreen" component={LoginScreen} />
     <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+    <RootStack.Screen name="Maps" component={Maps} />
   </RootStack.Navigator>
 );
 
