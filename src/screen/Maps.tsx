@@ -1,25 +1,46 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {Image, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
 import {TopNavigation} from '../components';
-import MapView, {Callout, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {color} from '../theme';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {RootStackParams} from '../navigations';
+import {useNavigation} from '@react-navigation/native';
+import {ModalConfirm} from '../components/molecule/Modal/ModalConfirm';
 
 type MapsProps = NativeStackScreenProps<RootStackParams, 'Maps'>;
 
 const Maps = ({route}: MapsProps) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const latitude = route.params.latitude;
   const longitude = route.params.longitude;
   const picture = route.params.picture;
 
-  console.log(picture);
+  const [showModal, setShowModal] = useState<boolean>();
+
+  const handleOnClose = () => {
+    console.log('handleOnClose');
+  };
+
+  const handleOnConfirm = () => {
+    console.log('handleOnConfirm');
+  };
 
   return (
     <View style={{flex: 1}}>
+      <TopNavigation.Type1
+        title="Map"
+        itemStrokeColor={color.Neutral[10]}
+        leftIconAction={() => navigation.goBack()}
+        bgColor={color.Dark[800]}
+      />
       <MapView
         style={{flex: 1}}
-        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        provider={PROVIDER_GOOGLE}
         region={{
           latitude: latitude,
           longitude: longitude,
@@ -27,20 +48,21 @@ const Maps = ({route}: MapsProps) => {
           longitudeDelta: 0.1,
         }}>
         <Marker
+          tracksViewChanges={false}
           coordinate={{latitude: latitude, longitude: longitude}}
-          title="Test"
-          description="description">
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 100,
-              height: 100,
-            }}>
-            <Image style={styles.image} source={{uri: picture}} />
-          </View>
+          onPress={() => setShowModal(true)}>
+          <Image style={styles.image} source={{uri: picture}} />
         </Marker>
       </MapView>
+      {showModal && (
+        <ModalConfirm
+          modalVisible={showModal}
+          subtitle={'You have to take another picture'}
+          title={'Delete The Picture ?'}
+          onPressClose={handleOnClose}
+          onPressYes={handleOnConfirm}
+        />
+      )}
     </View>
   );
 };
@@ -53,7 +75,8 @@ const styles = StyleSheet.create({
     backgroundColor: color.Dark[800],
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   },
 });

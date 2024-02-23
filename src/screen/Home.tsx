@@ -13,87 +13,15 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../navigations';
 import GetLocation from 'react-native-get-location';
 import {launchCamera} from 'react-native-image-picker';
+import {checkPermissionOFGps, requestCameraPermission} from '../utils';
 
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-
-  const [picture, setpicture] = useState(
+  const [picture, setPicture] = useState<string>(
     'https://previews.123rf.com/images/aguiters/aguiters1508/aguiters150800059/43551287-photo-camera-icon.jpg',
   );
-  const [toggle, settoggle] = useState(true);
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        const result = await launchCamera({
-          mediaType: 'photo',
-          cameraType: 'font',
-        });
-        setpicture(result?.assets[0]?.uri);
-        settoggle(false);
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const checkPermissionOFGps = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Cool Photo App Gps Permission',
-          message:
-            'Cool Photo App needs access to your Gps ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        getCurrentLocation();
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const getCurrentLocation = async () => {
-    await GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 60000,
-    })
-      .then(location => {
-        if (location) {
-          navigation.navigate('Maps', {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            picture,
-          });
-        }
-      })
-      .catch(error => {
-        const {code, message} = error;
-        console.warn(code, message);
-      });
-  };
+  const [toggle, setToggle] = useState<boolean>(true);
 
   return (
     <View style={styles.container}>
@@ -101,13 +29,9 @@ const HomeScreen = () => {
         title="Take a selfie"
         itemStrokeColor={color.Neutral[10]}
       />
-      {/* <View style={styles.bodyContainer}>
-        
-        
-      </View> */}
       <TouchableOpacity
         onPress={() => {
-          requestCameraPermission();
+          requestCameraPermission(setPicture, setToggle);
         }}
         activeOpacity={0.8}
         style={{
@@ -120,7 +44,10 @@ const HomeScreen = () => {
           source={{uri: picture}}
         />
       </TouchableOpacity>
-      <Button label="Continue" onPress={checkPermissionOFGps} />
+      <Button
+        label="Continue"
+        onPress={() => checkPermissionOFGps(navigation, picture)}
+      />
     </View>
   );
 };
