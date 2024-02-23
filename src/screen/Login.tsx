@@ -23,8 +23,8 @@ export const LoginScreen: React.FC = () => {
   const [focusInput, setFocusInput] = useState<'email' | 'password' | null>(
     null,
   );
-  const [inputValue, setInputValue] = useState<string>('123');
-  const [passValue, setPassValue] = useState<string>('123');
+  const [inputValue, setInputValue] = useState<string>('');
+  const [passValue, setPassValue] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
 
   const handleOnLogin = () => {

@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ModalConfirm} from '../components/molecule/Modal/ModalConfirm';
 import {Svg} from 'react-native-svg';
 import FastImage from 'react-native-fast-image';
+import {pictureStore} from '../store/picture.store';
 
 type MapsProps = NativeStackScreenProps<RootStackParams, 'Maps'>;
 
@@ -20,9 +21,8 @@ const Maps = ({route}: MapsProps) => {
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const latitude = route.params.latitude;
   const longitude = route.params.longitude;
-  const picture = route.params.picture;
 
-  console.log(picture, 'picture');
+  const {picture, setPicture} = pictureStore();
 
   const [showModal, setShowModal] = useState<boolean>();
   const [trackView, setTrackView] = useState(true);
@@ -33,6 +33,7 @@ const Maps = ({route}: MapsProps) => {
 
   const handleOnConfirm = () => {
     setShowModal(false);
+    setPicture(undefined);
     navigation.goBack();
   };
 
@@ -69,7 +70,7 @@ const Maps = ({route}: MapsProps) => {
                 style={styles.image}
                 source={{
                   // @ts-ignore
-                  uri: route.params.picture,
+                  uri: picture.path,
                 }}
                 resizeMode={FastImage.resizeMode.cover}
               />

@@ -32,7 +32,6 @@ export const requestCameraPermission = async (
 
 export const checkPermissionOFGps = async (
   navigate: NativeStackNavigationProp<RootStackParams>,
-  picture: ImageProps | string
 ): Promise<void> => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -48,7 +47,7 @@ export const checkPermissionOFGps = async (
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      getCurrentLocation(navigate, picture);
+      getCurrentLocation(navigate);
     } else {
       console.log('GPS permission denied');
     }
@@ -59,7 +58,6 @@ export const checkPermissionOFGps = async (
 
 export const getCurrentLocation = async (
   navigate: NativeStackNavigationProp<RootStackParams>,
-  picture: ImageProps | string
 ): Promise<void> => {
   await GetLocation.getCurrentPosition({
     enableHighAccuracy: true,
@@ -69,7 +67,6 @@ export const getCurrentLocation = async (
       navigate.navigate('Maps', {
         latitude: location.latitude,
         longitude: location.longitude,
-        picture,
       });
     })
     .catch(error => {

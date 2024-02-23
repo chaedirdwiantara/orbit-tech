@@ -12,6 +12,7 @@ import {
 } from '../utils';
 import {ModalImagePicker} from '../components/molecule/Modal/ModalImagePicker';
 import {Image as ImageProps} from 'react-native-image-crop-picker';
+import {pictureStore} from '../store/picture.store';
 
 const baseUrl =
   'https://previews.123rf.com/images/aguiters/aguiters1508/aguiters150800059/43551287-photo-camera-icon.jpg';
@@ -19,13 +20,17 @@ const baseUrl =
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
+
+  const {picture, setPicture} = pictureStore();
+
   const [modalPicture, setModalPicture] = useState<boolean>(false);
   const [buttonDisable, setButtonDisable] = useState<boolean>(true);
-  const [picture, setPicture] = useState<ImageProps>();
 
   useEffect(() => {
     if (picture) {
       setButtonDisable(false);
+    } else {
+      setButtonDisable(true);
     }
   }, [picture]);
 
@@ -67,7 +72,7 @@ const HomeScreen = () => {
           <Gap height={20} />
           <Button
             label="Continue"
-            onPress={() => checkPermissionOFGps(navigation, picture!.path)}
+            onPress={() => checkPermissionOFGps(navigation)}
             containerStyles={styles(buttonDisable).buttonViewStyle}
             disabled={buttonDisable}
           />
