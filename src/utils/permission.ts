@@ -1,8 +1,7 @@
 import {PermissionsAndroid} from 'react-native';
 import GetLocation from 'react-native-get-location';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParams} from '../navigations'; // Adjust the import path as necessary
-import { Image as ImageProps } from 'react-native-image-crop-picker';
+import {RootStackParams} from '../navigations'; 
 
 export const requestCameraPermission = async (
   setModalPicture: React.Dispatch<React.SetStateAction<boolean>>,
