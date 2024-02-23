@@ -38,7 +38,7 @@ export const requestCameraPermission = async (
 };
 
 export const checkPermissionOFGps = async (
-  navigate: NativeStackNavigationProp<RootStackParams, 'Maps'>,
+  navigate: NativeStackNavigationProp<RootStackParams>,
   picture: string
 ): Promise<void> => {
   try {
@@ -65,7 +65,7 @@ export const checkPermissionOFGps = async (
 };
 
 export const getCurrentLocation = async (
-  navigate: NativeStackNavigationProp<RootStackParams, 'Maps'>,
+  navigate: NativeStackNavigationProp<RootStackParams>,
   picture: string
 ): Promise<void> => {
   await GetLocation.getCurrentPosition({
