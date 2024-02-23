@@ -20,6 +20,7 @@ import Maps from '../screen/Maps';
 
 // Icon
 import {HomeIcon, SearchIcon} from '../assets/icon';
+import {Image as ImageProps} from 'react-native-image-crop-picker';
 
 // interface
 
@@ -30,7 +31,7 @@ export type RootStackParams = {
   Maps: {
     latitude: number;
     longitude: number;
-    picture: string;
+    picture: ImageProps | string;
   };
 };
 

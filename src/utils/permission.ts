@@ -1,12 +1,11 @@
 import {PermissionsAndroid} from 'react-native';
 import GetLocation from 'react-native-get-location';
-import {launchCamera} from 'react-native-image-picker';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../navigations'; // Adjust the import path as necessary
+import { Image as ImageProps } from 'react-native-image-crop-picker';
 
 export const requestCameraPermission = async (
-  setPicture: React.Dispatch<React.SetStateAction<string>>,
-  setToggle: React.Dispatch<React.SetStateAction<boolean>>
+  setModalPicture: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -22,13 +21,7 @@ export const requestCameraPermission = async (
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      const result = await launchCamera({
-        mediaType: 'photo',
-      });
-      if (result.assets && result.assets.length > 0) {
-        setPicture(result.assets[0].uri ?? '');
-        setToggle(false);
-      }
+      setModalPicture(true)
     } else {
       console.log('Camera permission denied');
     }
@@ -39,7 +32,7 @@ export const requestCameraPermission = async (
 
 export const checkPermissionOFGps = async (
   navigate: NativeStackNavigationProp<RootStackParams>,
-  picture: string
+  picture: ImageProps | string
 ): Promise<void> => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -66,7 +59,7 @@ export const checkPermissionOFGps = async (
 
 export const getCurrentLocation = async (
   navigate: NativeStackNavigationProp<RootStackParams>,
-  picture: string
+  picture: ImageProps | string
 ): Promise<void> => {
   await GetLocation.getCurrentPosition({
     enableHighAccuracy: true,

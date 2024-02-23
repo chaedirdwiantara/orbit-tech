@@ -10,6 +10,8 @@ import {
 import {RootStackParams} from '../navigations';
 import {useNavigation} from '@react-navigation/native';
 import {ModalConfirm} from '../components/molecule/Modal/ModalConfirm';
+import {Svg} from 'react-native-svg';
+import FastImage from 'react-native-fast-image';
 
 type MapsProps = NativeStackScreenProps<RootStackParams, 'Maps'>;
 
@@ -20,14 +22,22 @@ const Maps = ({route}: MapsProps) => {
   const longitude = route.params.longitude;
   const picture = route.params.picture;
 
+  console.log(picture, 'picture');
+
   const [showModal, setShowModal] = useState<boolean>();
+  const [trackView, setTrackView] = useState(true);
 
   const handleOnClose = () => {
-    console.log('handleOnClose');
+    setShowModal(false);
   };
 
   const handleOnConfirm = () => {
-    console.log('handleOnConfirm');
+    setShowModal(false);
+    navigation.goBack();
+  };
+
+  const changeTrackView = () => {
+    setTrackView(false);
   };
 
   return (
@@ -38,22 +48,35 @@ const Maps = ({route}: MapsProps) => {
         leftIconAction={() => navigation.goBack()}
         bgColor={color.Dark[800]}
       />
-      <MapView
-        style={{flex: 1}}
-        provider={PROVIDER_GOOGLE}
-        region={{
-          latitude: latitude,
-          longitude: longitude,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
-        }}>
-        <Marker
-          tracksViewChanges={false}
-          coordinate={{latitude: latitude, longitude: longitude}}
-          onPress={() => setShowModal(true)}>
-          <Image style={styles.image} source={{uri: picture}} />
-        </Marker>
-      </MapView>
+      {picture && (
+        <MapView
+          style={{flex: 1}}
+          provider={PROVIDER_GOOGLE}
+          region={{
+            latitude: latitude,
+            longitude: longitude,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          }}>
+          <Marker
+            // tracksViewChanges={false}
+            tracksViewChanges={trackView}
+            coordinate={{latitude: latitude, longitude: longitude}}
+            onPress={() => setShowModal(true)}>
+            <Svg width={50} height={50}>
+              <FastImage
+                onLoadEnd={changeTrackView}
+                style={styles.image}
+                source={{
+                  // @ts-ignore
+                  uri: route.params.picture,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+            </Svg>
+          </Marker>
+        </MapView>
+      )}
       {showModal && (
         <ModalConfirm
           modalVisible={showModal}

@@ -1,11 +1,4 @@
-import {
-  Image,
-  PermissionsAndroid,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {color} from '../theme';
 import {Button, Gap, TopNavigation} from '../components';
@@ -17,6 +10,8 @@ import {
   requestCameraPermission,
   widthResponsive,
 } from '../utils';
+import {ModalImagePicker} from '../components/molecule/Modal/ModalImagePicker';
+import {Image as ImageProps} from 'react-native-image-crop-picker';
 
 const baseUrl =
   'https://previews.123rf.com/images/aguiters/aguiters1508/aguiters150800059/43551287-photo-camera-icon.jpg';
@@ -24,15 +19,28 @@ const baseUrl =
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const [picture, setPicture] = useState<string>(baseUrl);
-  const [toggle, setToggle] = useState<boolean>(true);
+  const [modalPicture, setModalPicture] = useState<boolean>(false);
   const [buttonDisable, setButtonDisable] = useState<boolean>(true);
+  const [picture, setPicture] = useState<ImageProps>();
 
   useEffect(() => {
-    if (picture !== baseUrl) {
+    if (picture) {
       setButtonDisable(false);
     }
   }, [picture]);
+
+  const sendUri = (val: ImageProps) => {
+    setPicture(val);
+    setModalPicture(false);
+  };
+
+  const closeModal = () => {
+    setModalPicture(false);
+  };
+
+  const setOnHide = () => {
+    setModalPicture(false);
+  };
 
   return (
     <View style={styles().container}>
@@ -43,23 +51,37 @@ const HomeScreen = () => {
       <View style={styles().bodyContainer}>
         <TouchableOpacity
           onPress={() => {
-            requestCameraPermission(setPicture, setToggle);
+            requestCameraPermission(setModalPicture);
           }}
           activeOpacity={0.8}
           style={styles().imageContainer}>
-          <Image style={styles().imageStyle} source={{uri: picture}} />
+          <Image
+            style={styles().imageStyle}
+            source={{uri: picture ? picture.path : baseUrl}}
+          />
         </TouchableOpacity>
         <View style={styles().buttonStyle}>
-          <Text style={styles().infoTxt}>Touch the camera to activate..</Text>
+          {buttonDisable && (
+            <Text style={styles().infoTxt}>Touch the camera to activate..</Text>
+          )}
           <Gap height={20} />
           <Button
             label="Continue"
-            onPress={() => checkPermissionOFGps(navigation, picture)}
+            onPress={() => checkPermissionOFGps(navigation, picture!.path)}
             containerStyles={styles(buttonDisable).buttonViewStyle}
             disabled={buttonDisable}
           />
           <Gap height={20} />
         </View>
+        {modalPicture && (
+          <ModalImagePicker
+            title={'Upload Image'}
+            modalVisible={modalPicture}
+            sendUri={sendUri}
+            onPressClose={closeModal}
+            onModalHide={setOnHide}
+          />
+        )}
       </View>
     </View>
   );
